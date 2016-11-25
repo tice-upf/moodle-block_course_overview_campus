@@ -1199,11 +1199,11 @@ class block_course_overview_campus extends block_base {
                     // Create meta info code
                     // Hide metainfo on phones if configured
                     if ($coc_config->secondrowhideonphones == true) {
-                        $metainfo = '<br /><span class="coc-metainfo hidden-phone">('.implode($meta, '  |  ').')</span>';
+                        $metainfo = '<p class="coc-metainfo hidden-phone">'.implode($meta, '  -  ').'</p>';
                     }
                     // Otherwise
                     else {
-                        $metainfo = '<br /><span class="coc-metainfo">('.implode($meta, '  |  ').')</span>';
+                        $metainfo = '<p class="coc-metainfo">'.implode($meta, '  -  ').'</p>';
                     }
                 }
                 else {
@@ -1212,10 +1212,10 @@ class block_course_overview_campus extends block_base {
 
                 // Output course link
                 if ($coc_config->firstrowcoursename == 2) {
-                    echo $OUTPUT->heading(html_writer::link(new moodle_url('/course/view.php', array('id' => $c->id)), $c->shortname.$metainfo, $attributes), 3);
+                    echo $OUTPUT->heading(html_writer::link(new moodle_url('/course/view.php', array('id' => $c->id)), $c->shortname, $attributes), 3).$metainfo;
                 }
                 else {
-                    echo $OUTPUT->heading(html_writer::link(new moodle_url('/course/view.php', array('id' => $c->id)), format_string($c->fullname).$metainfo, $attributes), 3);
+                    echo $OUTPUT->heading(html_writer::link(new moodle_url('/course/view.php', array('id' => $c->id)), format_string($c->fullname), $attributes), 3).$metainfo;
                 }
 
 
