@@ -1173,7 +1173,7 @@ class block_course_overview_campus extends block_base {
                 if ($coc_config->secondrowshowshortname == true || $coc_config->secondrowshowtermname == true || $coc_config->secondrowshowcategoryname == true || $coc_config->secondrowshowtoplevelcategoryname == true || ($coc_config->secondrowshowteachername == true && count($c->teachers) > 0)) {
                     $meta = array();
                     if ($coc_config->secondrowshowshortname == true) {
-                        $meta[] = $c->shortname;
+                        $meta[] = '<span class="label label-info">'.$c->shortname.'</span>';
                     }
                     if ($coc_config->secondrowshowtermname == true) {
                         $meta[] = $c->termname;
