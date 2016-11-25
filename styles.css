@@ -66,6 +66,12 @@
     padding: 0 0 0 20px;
 }
 
+#coc-courselist .coursebox .dimmed::before {
+    color: #b94a48;
+    content: "\f023  ";
+    font-family: fontawesome;
+}
+
 
 /* Course news appearance */
 #coc-courselist .coc-coursenews {
