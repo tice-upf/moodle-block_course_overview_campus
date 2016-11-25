@@ -60,9 +60,10 @@
 }
 
 #coc-courselist .coc-metainfo {
-    font-size: 85%;
+    font-size: 90%;
     font-weight: normal !important;
     white-space: pre-wrap; /* To support multiple whitespaces before and after pipe */
+    padding: 0 0 0 20px;
 }
 
 
