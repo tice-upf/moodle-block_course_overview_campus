@@ -483,7 +483,7 @@ class block_course_overview_campus extends block_base {
                             // If we have to check for suspended teachers
                             if ($coc_config->teacherroleshidesuspended == 1) {
                                 $courseteachers = get_role_users($teacherroles, $context, true, 'ra.id, u.id, '.$allnames.', r.sortorder', 'u.lastname, u.firstname', false, '', '', '', $extrawhere);
-                            } 
+                            }
                             else {
                                 $courseteachers = get_role_users($teacherroles, $context, true, 'ra.id, u.id, '.$allnames.', r.sortorder', 'u.lastname, u.firstname');
                             }
@@ -493,7 +493,7 @@ class block_course_overview_campus extends block_base {
                             // If we have to check for suspended teachers
                             if ($coc_config->teacherroleshidesuspended == 1) {
                                 $courseteachers = get_role_users($teacherroles, $context, false, 'ra.id, u.id, '.$allnames.', r.sortorder', 'u.lastname, u.firstname', false, '', '', '', $extrawhere);
-                            } 
+                            }
                             else {
                                 $courseteachers = get_role_users($teacherroles, $context, false, 'ra.id, u.id, '.$allnames.', u.alternatename, r.sortorder', 'u.lastname, u.firstname');
                             }
@@ -503,7 +503,7 @@ class block_course_overview_campus extends block_base {
                             // If we have to check for suspended teachers
                             if ($coc_config->teacherroleshidesuspended == 1) {
                                 $courseteachers = get_role_users($teacherroles, $context, has_capability('moodle/course:reviewotherusers', $context), 'ra.id, u.id, '.$allnames.', r.sortorder', 'u.lastname, u.firstname', false, '', '', '', $extrawhere);
-                            } 
+                            }
                             else {
                                 $courseteachers = get_role_users($teacherroles, $context, has_capability('moodle/course:reviewotherusers', $context), 'ra.id, u.id, '.$allnames.', r.sortorder', 'u.lastname, u.firstname');
                             }
@@ -549,20 +549,38 @@ class block_course_overview_campus extends block_base {
                 if ($coc_config->prioritizemyteachedcourses) {
                     // Check if user is teacher in this course
                     if (array_key_exists($USER->id, $courseteachers)) {
-                        // Remember the course
-                        $myteachercourses[] = $c;
-                        // Remove the course from the courses array
-                        unset($courses[$c->id]);
+                      // Check if the course is visible and remember it to order visible courses at the top of the list
+                      if (empty($c->visible)) {
+                        $myteachercourses_hidden[] = $c;
+                      }
+                      else {
+                        $myteachercourses_visible[] = $c;
+                      }
+                      // Remember course id and remove the course from the courses array
+                      $myteachercourses_id[] = $c->id;
+                      unset($courses[$c->id]);
                     }
                 }
             }
 
 
             // Re-sort courses to list courses in which I have a teacher role first if configured - Last step: Adding the courses again
-            if ($coc_config->prioritizemyteachedcourses && isset ($myteachercourses) && count($myteachercourses) > 0) {
-                // Add the courses again at the beginning of the courses array
-                $courses = $myteachercourses + $courses;
+            if ($coc_config->prioritizemyteachedcourses && isset($myteachercourses_id) && count($myteachercourses_id) > 0) {
+                // Add the courses again with visible courses at the beginning of the courses array
+                if (isset($myteachercourses_visible) && isset($myteachercourses_hidden)) {
+                    $myteachercourses = array_merge($myteachercourses_visible,$myteachercourses_hidden);
+                    $courses = $myteachercourses + $courses;
+                }
+                elseif (isset($myteachercourses_visible) && empty($myteachercourses_hidden)) {
+                    $myteachercourses = $myteachercourses_visible;
+                    $courses = $myteachercourses + $courses;
+                }
+                elseif (empty($myteachercourses_visible) && isset($myteachercourses_hidden)) {
+                    $myteachercourses = $myteachercourses_hidden;
+                    $courses = $myteachercourses + $courses;
+                }
             }
+
 
 
             // Replace and remember currentterm placeholder with precise term based on my courses
