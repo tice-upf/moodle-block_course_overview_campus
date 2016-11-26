@@ -64,6 +64,7 @@
     font-weight: normal !important;
     white-space: pre-wrap; /* To support multiple whitespaces before and after pipe */
     padding: 0 0 0 20px;
+    margin-bottom: 0;
 }
 
 #coc-courselist .coursebox .dimmed::before {
@@ -109,4 +110,9 @@
 
 #coc-courselist .coursebox .coc-module:last-child {
     margin-bottom: 0;
+}
+
+#coc-courselist .coc-notification {
+  padding: 3px 0 3px 20px;
+  font-size:90%;
 }

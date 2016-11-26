@@ -253,3 +253,90 @@ function block_course_overview_campus_compare_categories($a, $b) {
         return 0;
     }
 }
+
+/**
+ * Display notifications for all new mod (include in $resource_counter array) since the last visit of the user in a particular course.
+ * (one part of this function has been copied from /moodle/course/resources.php)
+ *
+ * @param int course id ($course)
+ * @return html snippet containing notifications with label (bootstrap)
+ * @author : Sébastien Mehr
+ */
+function block_course_overview_campus_get_resources($course) {
+
+  global $DB, $USER;
+
+  // get all mods of the course
+  $modinfo = get_fast_modinfo($course);
+
+  // Initialize counters for all mod we want to display notification
+  $resources_counter = array(
+    'book' => 0,
+    'folder' => 0,
+    'page' => 0,
+    'resource' => 0,
+    'url' => 0
+  );
+
+  $html = '';
+
+  // get the last user's access to the course
+  $sql = 'SELECT timeaccess FROM {user_lastaccess} WHERE userid = ? AND courseid = ?';
+  $lastaccess = $DB->get_record_sql($sql, array($USER->id,$course));
+
+  // if the user never connected to the course, set to 0
+  if ($lastaccess!==false) {
+    $user_timeaccess = $lastaccess->timeaccess;
+  }
+  else {
+    $user_timeaccess = 0;
+  }
+
+  foreach ($modinfo->cms as $cm) {
+
+    if (!$cm->uservisible) {
+      // Exclude hiding or not avalaible mod
+      continue;
+    }
+    if (!$cm->has_view()) {
+      // Exclude label and similar
+      continue;
+    }
+
+    // get the mod information corresponding to our $resources_counter array
+    if (array_key_exists($cm->modname, $resources_counter)) {
+      $dateadded = $cm->added;
+      // if the mod is newer than the user's last access of the course
+      if ($dateadded > $user_timeaccess) {
+        // add +1 in the mod's counter
+        $resources_counter[$cm->modname] += 1;
+      }
+    }
+  }
+
+  if (array_sum($resources_counter) > 0) {
+    $html .= '<div class="coc-notification hidden-phone">';
+    // build a html snippet with the new $resources_counter array containing the number of each new mods
+    foreach ($resources_counter as $resource => $counter) {
+      if ($counter == 0 ) {
+        $html .= '';
+      }
+      elseif ($counter == 1) {
+        $html .= '<span class="badge badge-important">';
+        $html .= $counter;
+        $html .= ' ';
+        $html .= get_string('modulename', 'mod_'.$resource);
+        $html .= '</span> ';
+      }
+      else {
+        $html .= '<span class="badge badge-important">';
+        $html .= $counter;
+        $html .= ' ';
+        $html .= get_string('modulenameplural', 'mod_'.$resource);
+        $html .= '</span> ';
+      }
+    }
+    $html .= '</div>';
+  }
+  return $html;
+}
