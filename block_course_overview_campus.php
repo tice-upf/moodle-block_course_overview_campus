@@ -1043,6 +1043,9 @@ class block_course_overview_campus extends block_base {
                     $hidemanagebox = '<div id="coc-hiddencoursesmanagement-bottom" class="row-fluid coc-hidden">'.get_string('youhave', 'block_course_overview_campus').' <span id="coc-hiddencoursescount">'.$hiddencourses.'</span> '.get_string('hiddencourses', 'block_course_overview_campus').' | <a href="'.$CFG->wwwroot.$PAGE->url->out_as_local_url(true, array('coc-manage' => 1)).'">'.get_string('managehiddencourses', 'block_course_overview_campus').'</a></div>';
                 }
             }
+            else {
+              $hidemanagebox = '';
+            }
 
 
 
