@@ -1281,6 +1281,10 @@ class block_course_overview_campus extends block_base {
                 // if the user has no teacher roles, it shows the notifications resources
                 if ((empty($myteachercourses_id)) || (!in_array($c->id, $myteachercourses_id))) {
                   echo block_course_overview_campus_get_resources($c->id);
+                }                
+                // else display course meta links of the current course
+                else {
+                  echo block_course_overview_campus_get_metalink($c->id);
                 }
 
                 // End standard course overview coursebox

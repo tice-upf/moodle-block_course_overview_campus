@@ -174,3 +174,4 @@ $string['toplevelcategorycoursefilterdisplayname_desc'] = 'This display name is 
 $string['toplevelcategorycoursefiltersettingheading'] = 'Top level category filter: Filter activation';
 $string['trimester_desc'] = 'Trimester (Calendar year is divided into four terms)';
 $string['youhave'] = 'You have';
+$string['metalink'] = 'Also have access, students from :';

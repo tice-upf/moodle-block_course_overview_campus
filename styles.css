@@ -116,3 +116,9 @@
   padding: 3px 0 3px 20px;
   font-size:90%;
 }
+
+#coc-courselist .coc-metalink {
+  padding: 3px 0 3px 20px;
+  font-size:90%;
+  color: #333;
+}

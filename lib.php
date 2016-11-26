@@ -340,3 +340,38 @@ function block_course_overview_campus_get_resources($course) {
   }
   return $html;
 }
+
+
+/**
+* Display the parentcode of a childcourse using metalink enrolment
+*
+* @param int course id ($course)
+* @return html snippet containing parentcode's shortname
+* @author Sébastien Mehr
+*/
+function block_course_overview_campus_get_metalink($course) {
+
+  global $DB;
+
+  $html = '';
+  // get course meta links of the current course
+  $sql = 'SELECT e.customint1 parentid, p.shortname parentcode, e.courseid child
+          FROM {enrol} e
+          INNER JOIN {course} p ON p.id=e.customint1
+          INNER JOIN {course} c ON c.id=e.courseid
+          WHERE enrol = ?
+          AND e.courseid = ?';
+  $parentcodes = $DB->get_records_sql($sql, array('meta',$course));
+
+  if($parentcodes) {
+    $html .= '<div class="coc-metalink hidden-phone">'.get_string('metalink', 'block_course_overview_campus');
+    $html .= ' ';
+    foreach ($parentcodes as $id => $record) {
+      $html .=  '<span class="label label-warning">'.$record->parentcode.'</span>';
+      $html .=  ' ';
+    }
+    $html .= '</div>';
+  }
+
+  return $html;
+}
