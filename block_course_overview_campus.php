@@ -18,7 +18,7 @@
  * Block "course overview (campus)"
  *
  * @package    block_course_overview_campus
- * @copyright  2013 Alexander Bias, University of Ulm <alexander.bias@uni-ulm.de>
+ * @copyright  2013 Alexander Bias, Ulm University <alexander.bias@uni-ulm.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -230,12 +230,12 @@ class block_course_overview_campus extends block_base {
                 $hiddencourses = 0;
             }
 
-            // Create string to remember courses for YUI processing
-            $yui_courseslist = ' ';
+            // Create string to remember courses for JS processing
+            $js_courseslist = ' ';
 
-            // Create string to remember course news for YUI processing
+            // Create string to remember course news for JS processing
             if ($coc_config->enablecoursenews) {
-                $yui_coursenewslist = ' ';
+                $js_coursenewslist = ' ';
             }
 
 
@@ -495,7 +495,7 @@ class block_course_overview_campus extends block_base {
                                 $courseteachers = get_role_users($teacherroles, $context, false, 'ra.id, u.id, '.$allnames.', r.sortorder', 'u.lastname, u.firstname', false, '', '', '', $extrawhere);
                             }
                             else {
-                                $courseteachers = get_role_users($teacherroles, $context, false, 'ra.id, u.id, '.$allnames.', u.alternatename, r.sortorder', 'u.lastname, u.firstname');
+                                $courseteachers = get_role_users($teacherroles, $context, false, 'ra.id, u.id, '.$allnames.', r.sortorder', 'u.lastname, u.firstname');
                             }
                         }
                         // If depending on moodle/course:reviewotherusers capability
@@ -746,23 +746,23 @@ class block_course_overview_campus extends block_base {
                     $filtercount++;
                 }
                 if ($filtercount == 1) {
-                    $filterwidth = 'span12';
+                    $filterwidth = 'span12 col-md-12';
                 }
                 else if ($filtercount == 2) {
-                    $filterwidth = 'span6';
+                    $filterwidth = 'span6 col-md-6';
                 }
                 else if ($filtercount == 3) {
-                    $filterwidth = 'span4';
+                    $filterwidth = 'span4 col-md-4';
                 }
                 else if ($filtercount == 4) {
-                    $filterwidth = 'span3';
+                    $filterwidth = 'span3 col-md-6 col-lg-3';
                 }
                 else {
-                    $filterwidth = 'span12';
+                    $filterwidth = 'span12 col-md-12';
                 }
 
                 // Start section and form
-                echo '<div id="coc-filterlist" class="row-fluid"><form method="post" action="">';
+                echo '<div id="coc-filterlist" class="container-fluid"><form method="post" action="">';
 
                 // Show term filter
                 if ($coc_config->termcoursefilter == true) {
@@ -1039,7 +1039,7 @@ class block_course_overview_campus extends block_base {
                 }
                 // I have no hidden courses
                 else {
-                    // Create and remember bottom box for course hide management to appear via YUI as soon as a course is hidden
+                    // Create and remember bottom box for course hide management to appear via JS as soon as a course is hidden
                     $hidemanagebox = '<div id="coc-hiddencoursesmanagement-bottom" class="row-fluid coc-hidden">'.get_string('youhave', 'block_course_overview_campus').' <span id="coc-hiddencoursescount">'.$hiddencourses.'</span> '.get_string('hiddencourses', 'block_course_overview_campus').' | <a href="'.$CFG->wwwroot.$PAGE->url->out_as_local_url(true, array('coc-manage' => 1)).'">'.get_string('managehiddencourses', 'block_course_overview_campus').'</a></div>';
                 }
             }
@@ -1058,8 +1058,8 @@ class block_course_overview_campus extends block_base {
 
             // Show courses
             foreach ($courses as $c) {
-                // Remember course ID for YUI processing
-                $yui_courseslist .= $c->id.' ';
+                // Remember course ID for JS processing
+                $js_courseslist .= $c->id.' ';
 
                 // Start course div as visible if it isn't hidden or if hidden courses are currently shown
                 if (!$coc_config->enablehidecourses || ($c->hidecourse == 0) || $manage == true) {
@@ -1097,7 +1097,7 @@ class block_course_overview_campus extends block_base {
                 // Start filter by top level category div - later we use this div to filter the course
                 if ($coc_config->toplevelcategorycoursefilter == true) {
                     // Show course if it is within selected top level category or all categories are selected or if hidden courses are currently shown
-                    if ($c->categoryid == $selectedtoplevelcategory || $selectedtoplevelcategory == 'all' || $manage == true) {
+                    if ($c->toplevelcategoryid == $selectedtoplevelcategory || $selectedtoplevelcategory == 'all' || $manage == true) {
                         echo '<div class="toplevelcategorydiv coc-toplevelcategory-'.$c->toplevelcategoryid.'">';
                     }
                     // Otherwise hide the course with CSS
@@ -1220,7 +1220,7 @@ class block_course_overview_campus extends block_base {
                     // Create meta info code
                     // Hide metainfo on phones if configured
                     if ($coc_config->secondrowhideonphones == true) {
-                        $metainfo = '<p class="coc-metainfo hidden-phone">'.implode($meta, '  -  ').'</p>';
+                        $metainfo = '<p class="coc-metainfo hidden-phone hidden-sm-down">'.implode($meta, '  -  ').'</p>';
                     }
                     // Otherwise
                     else {
@@ -1243,8 +1243,8 @@ class block_course_overview_campus extends block_base {
                 // Output course news
                 if ($coc_config->enablecoursenews) {
                     if (array_key_exists($c->id, $coursenews)) {
-                        // Remember course ID for YUI processing
-                        $yui_coursenewslist .= $c->id.' ';
+                        // Remember course ID for JS processing
+                        $js_coursenewslist .= $c->id.' ';
 
                         // Start course news div as visible if the course's news aren't hidden
                         if ($c->hidenews == 0) {
@@ -1259,7 +1259,7 @@ class block_course_overview_campus extends block_base {
                         foreach ($coursenews[$c->id] as $modname => $html) {
                             echo '<div class="coc-module">';
                                 // Output activity icon
-                                echo $OUTPUT->pix_icon('icon', $modname, 'mod_'.$modname, array('class'=>'iconlarge'));
+                                echo $OUTPUT->pix_icon('icon', $modname, 'mod_'.$modname, array('class'=>'iconlarge activityicon'));
 
                                 // Output activity introduction string
                                 if (get_string_manager()->string_exists("activityoverview", $modname)) {
@@ -1281,7 +1281,7 @@ class block_course_overview_campus extends block_base {
                 // if the user has no teacher roles, it shows the notifications resources
                 if ((empty($myteachercourses_id)) || (!in_array($c->id, $myteachercourses_id))) {
                   echo block_course_overview_campus_get_resources($c->id);
-                }                
+                }
                 // else display course meta links of the current course
                 else {
                   echo block_course_overview_campus_get_metalink($c->id);
@@ -1323,7 +1323,10 @@ class block_course_overview_campus extends block_base {
             /***                 OUTPUT FOR HIDDEN COURSES MANAGEMENT                     ***/
             /********************************************************************************/
 
-            echo $hidemanagebox;
+            // Do only if course hiding is enabled
+            if ($coc_config->enablehidecourses) {
+                echo $hidemanagebox;
+            }
 
 
 
@@ -1365,19 +1368,35 @@ class block_course_overview_campus extends block_base {
                 user_preference_allow_ajax_update('block_course_overview_campus-selectedtoplevelcategory', PARAM_TEXT);
             }
 
-            // Include YUI for hiding courses with AJAX
+            // Include JS for hiding courses with AJAX
             if ($coc_config->enablehidecourses) {
-                $PAGE->requires->yui_module('moodle-block_course_overview_campus-hidecourse', 'M.block_course_overview_campus.initHideCourse', array(array('courses'=>trim($yui_courseslist), 'editing'=>$manage)));
+                $PAGE->requires->js_call_amd('block_course_overview_campus/hidecourse', 'initHideCourse', [
+                    [
+                        'courses' => trim($js_courseslist), 'editing' => $manage
+                    ]
+                ]);
             }
 
-            // Include YUI for hiding course news with AJAX
+            // Include JS for hiding course news with AJAX
             if ($coc_config->enablecoursenews) {
-                $PAGE->requires->yui_module('moodle-block_course_overview_campus-hidenews', 'M.block_course_overview_campus.initHideNews', array(array('courses'=>trim($yui_coursenewslist))));
+                $PAGE->requires->js_call_amd('block_course_overview_campus/hidenews', 'initHideNews', [
+                    [
+                        'courses' => trim($js_coursenewslist)
+                    ]
+                ]);
             }
 
-            // Include YUI for filtering courses with AJAX
+            // Include JS for filtering courses with AJAX
+            $js_filteroptions = [
+                'initialsettings' => [
+                    'term' => $selectedterm,
+                    'teacher' => $selectedteacher,
+                    'category' => $selectedcategory,
+                    'toplevelcategory' => $selectedtoplevelcategory,
+                ],
+            ]; // Passing these options to the JS code is necessary for filtering the course list again when using browser 'back' button
             if ($coc_config->teachercoursefilter == true || $coc_config->termcoursefilter == true || $coc_config->categorycoursefilter == true || $coc_config->toplevelcategorycoursefilter == true) {
-                $PAGE->requires->yui_module('moodle-block_course_overview_campus-filter', 'M.block_course_overview_campus.initFilter', array());
+                $PAGE->requires->js_call_amd('block_course_overview_campus/filter', 'initFilter', [$js_filteroptions]);
             }
         }
 
