@@ -4,6 +4,19 @@ moodle-block_course_overview_campus
 Changes
 -------
 
+### v3.2-r4
+
+* 2017-03-29 - Tighten parameter filtering for user preferences saved by block_course_overview_campus
+* 2017-03-16 - Bugfix: Eliminate debug message about duplicate teacher role entries - Credits to Davo Smith
+* 2017-03-10 - Don't show course news when hidden courses management is active
+* 2017-03-10 - Bugfix: The hidden courses management box was partly broken after the styling changes in v3.2-r3
+* 2017-03-10 - Bugfix: The fallback for browsers with JavaScript disabled was broken after the styling changes in v3.2-r3
+* 2017-03-10 - Restructure code in several areas, especially to support our companion plugin local_boostcoc; No functionality change
+
+### v3.2-r3
+
+* 2017-03-04 - Change the styling of the block even more to Bootstrap 4
+
 ### v3.2-r2
 
 * 2017-01-27 - Bugfix: Set filter correctly after using the browser's back functionality - Credits to Davo Smith
