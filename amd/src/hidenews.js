@@ -6,12 +6,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/* This comment is just there to keep grunt satisfied and won't be processed at runtime */
-/* global define, M */
-
-define(['jquery'], function ($) {
+define(['jquery'], function($) {
     "use strict";
 
+    /**
+     * Function to hide news from a course.
+     */
     function hideNews(e) {
         // Prevent the event from refreshing the page.
         if (e !== undefined) {
@@ -26,6 +26,9 @@ define(['jquery'], function ($) {
         M.util.set_user_preference('block_course_overview_campus-hidenews-' + e.data.course, 1);
     }
 
+    /**
+     * Function to show news for a course.
+     */
     function showNews(e) {
         // Prevent the event from refreshing the page.
         if (e !== undefined) {
@@ -41,7 +44,7 @@ define(['jquery'], function ($) {
     }
 
     return {
-        initHideNews: function (params) {
+        initHideNews: function(params) {
             var i;
             var courses = params.courses.split(" ");
             for (i = 0; i < courses.length; i++) {

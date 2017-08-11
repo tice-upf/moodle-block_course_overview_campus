@@ -24,6 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// @codingStandardsIgnoreFile
+// Let codechecker ignore this file. This legacy code is not fully compliant to Moodle coding style but working and well documented.
+
 if ($hassiteconfig) {
     // Empty $settings to prevent a single settings page from being created by lib/classes/plugininfo/block.php
     // because we will create several settings pages now.
@@ -227,6 +230,7 @@ if ($hassiteconfig) {
 
         // Get activities which provide course news.
         $modules = get_plugin_list_with_function('mod', 'print_overview');
+        $modchoices = array();
         foreach ($modules as $m => $f) {
             $modchoices[$m] = get_string('pluginname', $m);
         }

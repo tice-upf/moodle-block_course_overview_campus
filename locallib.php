@@ -24,6 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// @codingStandardsIgnoreFile
+// Let codechecker ignore this file. This legacy code is not fully compliant to Moodle coding style but working and well documented.
+
 /**
  * Get my courses from DB
  *
@@ -53,7 +56,8 @@ function block_course_overview_campus_course_hidden_by_hidecourses($course) {
     // Course is visible if it isn't hidden.
     if (get_user_preferences('block_course_overview_campus-hidecourse-'.$course->id, 0) == 0) {
         return false;
-    // Otherwise it is hidden.
+
+        // Otherwise it is hidden.
     } else {
         return true;
     }
@@ -71,7 +75,8 @@ function block_course_overview_campus_coursenews_hidden($course) {
     if (get_user_preferences('block_course_overview_campus-hidenews-'.$course->id,
             get_config('block_course_overview_campus', 'coursenewsdefault')) == 1) {
         return true;
-    // Otherwise it is visible.
+
+        // Otherwise it is visible.
     } else {
         return false;
     }
@@ -89,7 +94,8 @@ function block_course_overview_campus_course_hidden_by_termcoursefilter($course,
     // Course is visible if it is within selected term or all terms are selected.
     if ($course->term == $selectedterm || $selectedterm == 'all') {
         return false;
-    // Otherwise it is hidden.
+
+        // Otherwise it is hidden.
     } else {
         return true;
     }
@@ -107,7 +113,8 @@ function block_course_overview_campus_course_hidden_by_categorycoursefilter($cou
     // Course is visible if it is within selected parent category or all categories are selected.
     if ($course->categoryid == $selectedcategory || $selectedcategory == 'all') {
         return false;
-    // Otherwise it is hidden.
+
+        // Otherwise it is hidden.
     } else {
         return true;
     }
@@ -125,7 +132,8 @@ function block_course_overview_campus_course_hidden_by_toplevelcategorycoursefil
     // Course is visible if it is within selected top level category or all categories are selected.
     if ($course->toplevelcategoryid == $selectedtoplevelcategory || $selectedtoplevelcategory == 'all') {
         return false;
-    // Otherwise it is hidden.
+
+        // Otherwise it is hidden.
     } else {
         return true;
     }
@@ -143,7 +151,8 @@ function block_course_overview_campus_course_hidden_by_teachercoursefilter($cour
     // Course is visible if it has the selected teacher or all teachers are selected.
     if (isset($course->teachers[$selectedteacher]) || $selectedteacher == 'all') {
         return false;
-    // Otherwise it is hidden.
+
+        // Otherwise it is hidden.
     } else {
         return true;
     }
@@ -171,6 +180,7 @@ function block_course_overview_campus_course_hidden_by_anyfilter($course) {
  * Get course news for courses (copied from /blocks/course_overview/locallib.php)
  *
  * @param array $courses courses for which course news need to be shown
+ * @param array $skip modules which should be skipped
  * @return array html overview
  */
 function block_course_overview_campus_get_overviews($courses, $skip) {
@@ -204,7 +214,6 @@ function block_course_overview_campus_get_overviews($courses, $skip) {
 /**
  * Check if the configured term dates make sense
  *
- * @param object $coc_config The config object
  * @return bool
  */
 function block_course_overview_campus_check_term_config() {
@@ -437,7 +446,7 @@ function block_course_overview_campus_remember_notshowncourses_for_local_boostco
  * Unfortunately, at page load local_boostcoc can only change the nav drawer _before_ this function can store its data, thus the
  * fallback when javascript is off has a lag.
  *
- * @param array $courses
+ * @param int $hiddencoursescounter
  */
 function block_course_overview_campus_remember_activefilters_for_local_boostcoc($hiddencoursescounter) {
     // Do only if local_boostcoc is installed.

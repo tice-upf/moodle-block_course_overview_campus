@@ -6,12 +6,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/* This comment is just there to keep grunt satisfied and won't be processed at runtime */
-/* global define, M */
-
-define(['jquery'], function ($) {
+define(['jquery'], function($) {
     "use strict";
 
+    /**
+     * Function to filter the shown courses by term.
+     */
     function filterTerm(e) {
         // Prevent the event from refreshing the page.
         if (e !== undefined) {
@@ -30,6 +30,9 @@ define(['jquery'], function ($) {
         M.util.set_user_preference('block_course_overview_campus-selectedterm', value);
     }
 
+    /**
+     * Function to filter the shown courses by term teacher.
+     */
     function filterTeacher(e) {
         // Prevent the event from refreshing the page.
         if (e !== undefined) {
@@ -48,6 +51,9 @@ define(['jquery'], function ($) {
         M.util.set_user_preference('block_course_overview_campus-selectedteacher', value);
     }
 
+    /**
+     * Function to filter the shown courses by parent category.
+     */
     function filterCategory(e) {
         // Prevent the event from refreshing the page.
         if (e !== undefined) {
@@ -66,6 +72,9 @@ define(['jquery'], function ($) {
         M.util.set_user_preference('block_course_overview_campus-selectedcategory', value);
     }
 
+    /**
+     * Function to filter the shown courses by top level category.
+     */
     function filterTopLevelCategory(e) {
         // Prevent the event from refreshing the page.
         if (e !== undefined) {
@@ -84,7 +93,11 @@ define(['jquery'], function ($) {
         M.util.set_user_preference('block_course_overview_campus-selectedtoplevelcategory', value);
     }
 
+    /**
+     * Function to apply all filters again (used when the user has pushed the back button).
+     */
     function applyAllFilters(initialSettings) {
+        /* eslint-disable max-depth */
         var setting, value, $element, elementValue;
         for (setting in initialSettings) {
             if (initialSettings.hasOwnProperty(setting)) {
@@ -111,8 +124,12 @@ define(['jquery'], function ($) {
                 }
             }
         }
+        /* eslint-enable max-depth */
     }
 
+    /**
+     * Function to remember the not shown courses for local_boostcoc.
+     */
     function localBoostCOCRememberNotShownCourses() {
         // Get all course nodes which are not shown (= invisible = their height is 0) and store their IDs in an array.
         var notshowncourses = new Array();
@@ -129,6 +146,9 @@ define(['jquery'], function ($) {
         M.util.set_user_preference('local_boostcoc-notshowncourses', jsonstring);
     }
 
+    /**
+     * Function to remember the active filters for local_boostcoc.
+     */
     function localBoostCOCRememberActiveFilters() {
         // Get all active filters (value != all) and the fact that hidden courses are present and store them in an array.
         var activefilters = new Array();
@@ -150,7 +170,7 @@ define(['jquery'], function ($) {
     }
 
     return {
-        initFilter: function (params) {
+        initFilter: function(params) {
             // Add change listener to filter widgets.
             $('#coc-filterterm').on('change', filterTerm);
             $('#coc-filterteacher').on('change', filterTeacher);

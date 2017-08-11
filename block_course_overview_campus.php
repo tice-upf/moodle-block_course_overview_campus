@@ -24,32 +24,70 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// @codingStandardsIgnoreFile
+// Let codechecker ignore this file. This legacy code is not fully compliant to Moodle coding style but working and well documented.
+
+/**
+ * Class block_course_overview_campus
+ *
+ * @package    block_course_overview_campus
+ * @copyright  2013 Alexander Bias, Ulm University <alexander.bias@uni-ulm.de>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class block_course_overview_campus extends block_base {
 
+    /**
+     * init function
+     * @return void
+     */
     public function init() {
         $this->title = get_string('pluginname', 'block_course_overview_campus');
     }
 
+    /**
+     * specialization function
+     * @return void
+     */
     public function specialization() {
         $this->title = format_string(get_config('block_course_overview_campus', 'blocktitle'));
     }
 
+    /**
+     * applicable_formats function
+     * @return array
+     */
     public function applicable_formats() {
         return array('my-index' => true, 'my' => true, 'site-index' => true);
     }
 
+    /**
+     * has_config function
+     * @return bool
+     */
     public function has_config() {
         return true;
     }
 
+    /**
+     * instance_allow_multiple function
+     * @return bool
+     */
     public function instance_allow_multiple() {
         return false;
     }
 
+    /**
+     * instance_can_be_hidden function
+     * @return bool
+     */
     public function instance_can_be_hidden() {
         return false;
     }
 
+    /**
+     * get_content function
+     * @return string
+     */
     public function get_content() {
         global $coc_config, $USER, $CFG, $DB, $PAGE, $OUTPUT;
 
@@ -292,12 +330,9 @@ class block_course_overview_campus extends block_base {
                         // If term doesn't start on January 1st and course start date's day comes before term start day,
                         // set course term to course start date's year + former year.
                         else {
-                            $courseterm->id = ($coursestartyear-1).'-'.$coursestartyear;
+                            $courseterm->id = ($coursestartyear - 1).'-'.$coursestartyear;
                             $courseterm->name = block_course_overview_campus_get_term_displayname($coc_config->term1name, ($coursestartyear - 1), $coursestartyear);
                         }
-
-                        // Discard date information.
-                        unset($courseyday, $courseyear, $term1startday);
                     }
                     // "Semester" mode.
                     else if ($coc_config->termmode == 2) {
@@ -331,9 +366,6 @@ class block_course_overview_campus extends block_base {
                                 $courseterm->name = block_course_overview_campus_get_term_displayname($coc_config->term2name, $coursestartyear, ($coursestartyear + 1));
                             }
                         }
-
-                        // Discard date information.
-                        unset($courseyday, $courseyear, $term1startday, $term2startday);
                     }
                     // "Tertial" mode.
                     else if ($coc_config->termmode == 3) {
@@ -374,9 +406,6 @@ class block_course_overview_campus extends block_base {
                                 $courseterm->name = block_course_overview_campus_get_term_displayname($coc_config->term3name, $coursestartyear, ($coursestartyear + 1));
                             }
                         }
-
-                        // Discard date information.
-                        unset($courseyday, $courseyear, $term1startday, $term2startday, $term3startday);
                     }
                     // "Trimester" mode.
                     else if ($coc_config->termmode == 4) {
@@ -424,9 +453,6 @@ class block_course_overview_campus extends block_base {
                                 $courseterm->name = block_course_overview_campus_get_term_displayname($coc_config->term4name, $coursestartyear, ($coursestartyear + 1));
                             }
                         }
-
-                        // Discard date information.
-                        unset($courseyday, $courseyear, $term1startday, $term2startday, $term3startday, $term4startday);
                     }
                     // This should never happen.
                     else {
@@ -687,7 +713,7 @@ class block_course_overview_campus extends block_base {
                 else if ($coc_config->termmode == '2') {
                     // If current day comes before first term start day and there are courses this term,
                     // set selected term to second term of former year.
-                    if (intval(date('z')) < intval(date('z', strtotime(date('Y', $c->startdate).'-'.$coc_config->term1startday))) && isset($filterterms[(date('Y')-1).'-2'])) {
+                    if (intval(date('z')) < intval(date('z', strtotime(date('Y', $c->startdate).'-'.$coc_config->term1startday))) && isset($filterterms[(date('Y') - 1).'-2'])) {
                         $selectedterm = (date('Y') - 1).'-2';
                     }
                     // If current day comes on or after first term start day but before second term start day and there are courses
@@ -943,12 +969,9 @@ class block_course_overview_campus extends block_base {
                     }
                     // Sort full category information array by sortorder.
                     $success = usort($filtertoplevelcategoriesfullinfo, "block_course_overview_campus_compare_categories");
-                    // If sorting was not successful, return old array.
-                    if (!$success) {
-                        return $filtertoplevelcategories;
-                    }
-                    // If sorting was successful, return new array with same data structure like the old one.
-                    else {
+                    // If sorting was successful, create new array with same data structure like the old one.
+                    // Otherwise just leave the old array as it is (should not happen).
+                    if ($success) {
                         $filtertoplevelcategories = array();
                         foreach ($filtertoplevelcategoriesfullinfo as $ftl) {
                             $filtertoplevelcategories[$ftl->id] = format_string($ftl->name);

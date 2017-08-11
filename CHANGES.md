@@ -4,6 +4,11 @@ moodle-block_course_overview_campus
 Changes
 -------
 
+### v3.2-r6
+
+* 2017-06-16 - Bugfix: Prevent debug notice when there are no modules supporting the print_overview() function
+* 2017-05-29 - Add Travis CI support
+
 ### v3.2-r5
 
 * 2017-05-05 - Improve README.md
