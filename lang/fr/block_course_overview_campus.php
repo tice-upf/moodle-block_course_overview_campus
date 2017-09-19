@@ -25,3 +25,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['metalink'] = 'Ont également accès, les étudiants de :';
+$string['newresource'] = 'Contenu ajouté ou mis à jour';

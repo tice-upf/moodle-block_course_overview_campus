@@ -24,9 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// @codingStandardsIgnoreFile
-// Let codechecker ignore this file. This legacy code is not fully compliant to Moodle coding style but working and well documented.
-
 /**
  * Get my courses from DB
  *
@@ -56,8 +53,7 @@ function block_course_overview_campus_course_hidden_by_hidecourses($course) {
     // Course is visible if it isn't hidden.
     if (get_user_preferences('block_course_overview_campus-hidecourse-'.$course->id, 0) == 0) {
         return false;
-
-        // Otherwise it is hidden.
+    // Otherwise it is hidden.
     } else {
         return true;
     }
@@ -75,8 +71,7 @@ function block_course_overview_campus_coursenews_hidden($course) {
     if (get_user_preferences('block_course_overview_campus-hidenews-'.$course->id,
             get_config('block_course_overview_campus', 'coursenewsdefault')) == 1) {
         return true;
-
-        // Otherwise it is visible.
+    // Otherwise it is visible.
     } else {
         return false;
     }
@@ -94,8 +89,7 @@ function block_course_overview_campus_course_hidden_by_termcoursefilter($course,
     // Course is visible if it is within selected term or all terms are selected.
     if ($course->term == $selectedterm || $selectedterm == 'all') {
         return false;
-
-        // Otherwise it is hidden.
+    // Otherwise it is hidden.
     } else {
         return true;
     }
@@ -113,8 +107,7 @@ function block_course_overview_campus_course_hidden_by_categorycoursefilter($cou
     // Course is visible if it is within selected parent category or all categories are selected.
     if ($course->categoryid == $selectedcategory || $selectedcategory == 'all') {
         return false;
-
-        // Otherwise it is hidden.
+    // Otherwise it is hidden.
     } else {
         return true;
     }
@@ -132,8 +125,7 @@ function block_course_overview_campus_course_hidden_by_toplevelcategorycoursefil
     // Course is visible if it is within selected top level category or all categories are selected.
     if ($course->toplevelcategoryid == $selectedtoplevelcategory || $selectedtoplevelcategory == 'all') {
         return false;
-
-        // Otherwise it is hidden.
+    // Otherwise it is hidden.
     } else {
         return true;
     }
@@ -151,8 +143,7 @@ function block_course_overview_campus_course_hidden_by_teachercoursefilter($cour
     // Course is visible if it has the selected teacher or all teachers are selected.
     if (isset($course->teachers[$selectedteacher]) || $selectedteacher == 'all') {
         return false;
-
-        // Otherwise it is hidden.
+    // Otherwise it is hidden.
     } else {
         return true;
     }
@@ -180,7 +171,6 @@ function block_course_overview_campus_course_hidden_by_anyfilter($course) {
  * Get course news for courses (copied from /blocks/course_overview/locallib.php)
  *
  * @param array $courses courses for which course news need to be shown
- * @param array $skip modules which should be skipped
  * @return array html overview
  */
 function block_course_overview_campus_get_overviews($courses, $skip) {
@@ -214,6 +204,7 @@ function block_course_overview_campus_get_overviews($courses, $skip) {
 /**
  * Check if the configured term dates make sense
  *
+ * @param object $coc_config The config object
  * @return bool
  */
 function block_course_overview_campus_check_term_config() {
@@ -446,7 +437,7 @@ function block_course_overview_campus_remember_notshowncourses_for_local_boostco
  * Unfortunately, at page load local_boostcoc can only change the nav drawer _before_ this function can store its data, thus the
  * fallback when javascript is off has a lag.
  *
- * @param int $hiddencoursescounter
+ * @param array $courses
  */
 function block_course_overview_campus_remember_activefilters_for_local_boostcoc($hiddencoursescounter) {
     // Do only if local_boostcoc is installed.
@@ -538,11 +529,11 @@ function block_course_overview_campus_get_metalink($course) {
 
 
 /**
- * Display notifications for all new mod (include in $resource_counter array) since the last visit of the user in a particular course.
+ * Display notifications for all new mod (include in $resource_type array) since the last visit of the user in a particular course.
  * (one part of this function has been copied from /moodle/course/resources.php)
  *
  * @param int course id ($course)
- * @return html snippet containing notifications with label (bootstrap)
+ * @return html snippet containing notification with label (bootstrap)
  * @author : Sébastien Mehr
  */
 function block_course_overview_campus_get_resources($course) {
@@ -552,16 +543,12 @@ function block_course_overview_campus_get_resources($course) {
   // get all mods of the course
   $modinfo = get_fast_modinfo($course);
 
-  // Initialize counters for all mod we want to display notification
-  $resources_counter = array(
-    'book' => 0,
-    'folder' => 0,
-    'page' => 0,
-    'resource' => 0,
-    'url' => 0
-  );
+
+  // all mod we want to check
+  $resource_type = array('book', 'folder', 'page', 'resource', 'url');
 
   $html = '';
+  $course_resource = array(); 
 
   // get the last user's access to the course
   $sql = 'SELECT timeaccess FROM {user_lastaccess} WHERE userid = ? AND courseid = ?';
@@ -574,7 +561,7 @@ function block_course_overview_campus_get_resources($course) {
   else {
     $user_timeaccess = 0;
   }
-
+  
   foreach ($modinfo->cms as $cm) {
 
     if (!$cm->uservisible) {
@@ -586,40 +573,39 @@ function block_course_overview_campus_get_resources($course) {
       continue;
     }
 
-    // get the mod information corresponding to our $resources_counter array
-    if (array_key_exists($cm->modname, $resources_counter)) {
-      $dateadded = $cm->added;
-      // if the mod is newer than the user's last access of the course
-      if ($dateadded > $user_timeaccess) {
-        // add +1 in the mod's counter
-        $resources_counter[$cm->modname] += 1;
-      }
+    // get the mod id corresponding to our $resources_type array
+    if (in_array($cm->modname, $resource_type)) {
+	      $course_resource[] = $cm->id;
     }
-  }
+  } 
 
-  if (array_sum($resources_counter) > 0) {
-    $html .= '<div class="coc-notification hidden-phone hidden-sm-down">';
-    // build a html snippet with the new $resources_counter array containing the number of each new mods
-    foreach ($resources_counter as $resource => $counter) {
-      if ($counter == 0 ) {
-        $html .= '';
-      }
-      elseif ($counter == 1) {
+  if ($course_resource) {
+	  
+	  // Select all mods history contained in $resource_type_array
+	  $queryparams = ['courseid' => $course];
+	  list($insql, $params) = $DB->get_in_or_equal($course_resource, SQL_PARAMS_NAMED);
+	  $queryparams += $params;
+	  $queryparams += ['create' => 'c', 'update' => 'u', 'timeaccess' => $user_timeaccess];
+
+				  
+	  $sql_log = "SELECT contextinstanceid
+	              FROM {logstore_standard_log}
+				  WHERE courseid = :courseid
+				  AND contextinstanceid $insql
+				  AND (crud = :create OR crud = :update)
+				  AND timecreated > :timeaccess";
+
+	  $resource_log = $DB->record_exists_sql($sql_log, $queryparams);
+
+	  if ($resource_log) {
+        $html .= '<div class="coc-notification hidden-sm-down">';	
         $html .= '<span class="badge badge-important">';
-        $html .= $counter;
-        $html .= ' ';
-        $html .= get_string('modulename', 'mod_'.$resource);
-        $html .= '</span> ';
-      }
-      else {
-        $html .= '<span class="badge badge-important">';
-        $html .= $counter;
-        $html .= ' ';
-        $html .= get_string('modulenameplural', 'mod_'.$resource);
-        $html .= '</span> ';
-      }
-    }
-    $html .= '</div>';
-  }
+		$html .= get_string('newresource', 'block_course_overview_campus');
+		$html .= '</span> ';
+		$html .= '</div> ';
+	  }
+		
+ }
+
   return $html;
 }
